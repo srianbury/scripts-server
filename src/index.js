@@ -2,20 +2,25 @@ import "dotenv/config";
 import cors from "cors";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
+import jwt from "jsonwebtoken";
 import { schema } from "./schema";
 import { resolvers } from "./resolvers";
 import { sequelize, models } from "./models";
+import { initDb } from "./dev";
 
 const BASE_PATH = "/graphql";
 const ERASE_DB_ON_SYNC = process.env.NODE_ENV === "production" ? false : true;
 
-async function initDb() {
-  await models.User.create({
-    username: "bsunbury",
-  });
-  await models.User.create({
-    username: "stevie",
-  });
+async function getRequestor(req) {
+  const token = req.headers["authorization"];
+
+  if (!token) {
+    return null;
+  }
+
+  if (token) {
+    return await jwt.verify(token, process.env.SECRET);
+  }
 }
 
 async function startApolloServer() {
@@ -31,10 +36,10 @@ async function startApolloServer() {
         .replace("SequelizeValidationError: ", "")
         .replace("Validation error: ", ""),
     }),
-    context: {
+    context: async ({ req }) => ({
       models,
-      requestor: null,
-    },
+      requestor: await getRequestor(req),
+    }),
   });
 
   await server.start();
@@ -44,7 +49,7 @@ async function startApolloServer() {
   // );
   sequelize.sync({ force: ERASE_DB_ON_SYNC }).then(async () => {
     if (ERASE_DB_ON_SYNC) {
-      initDb();
+      initDb(models);
     }
 
     app.listen({ port: process.env.PORT }, () => {});

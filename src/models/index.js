@@ -1,5 +1,7 @@
 import { Sequelize } from "sequelize";
-import { user } from "./user";
+import { defineUser } from "./user";
+import { definePassword } from "./password";
+import { defineSript } from "./script";
 
 const sequelize = new Sequelize(
   process.env.DATABASE,
@@ -13,7 +15,15 @@ const sequelize = new Sequelize(
 );
 
 const models = {
-  User: user(sequelize),
+  User: defineUser(sequelize),
+  Password: definePassword(sequelize),
+  Script: defineSript(sequelize),
 };
+
+Object.keys(models).forEach((key) => {
+  if ("associate" in models[key]) {
+    models[key].associate(models);
+  }
+});
 
 export { sequelize, models };

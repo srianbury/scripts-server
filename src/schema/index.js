@@ -1,5 +1,6 @@
 import { gql } from "apollo-server-express";
 import { userSchema } from "./user";
+import { scriptSchema } from "./script";
 
 const linkSchema = gql`
   type Query {
@@ -11,6 +12,6 @@ const linkSchema = gql`
   }
 `;
 
-const schema = [linkSchema, userSchema];
+const schema = [linkSchema, userSchema, scriptSchema];
 
 export { schema };

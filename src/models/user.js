@@ -1,6 +1,6 @@
 import { DataTypes } from "sequelize";
 
-const user = (sequelize) => {
+function defineUser(sequelize) {
   const User = sequelize.define("user", {
     username: {
       type: DataTypes.STRING,
@@ -20,6 +20,14 @@ const user = (sequelize) => {
         },
       },
     },
+    email: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: false,
+      validate: {
+        isEmail: true,
+      },
+    },
   });
 
   User.findByUsername = async (username) => {
@@ -30,7 +38,19 @@ const user = (sequelize) => {
     return user;
   };
 
-  return User;
-};
+  User.findByEmail = async (email) => {
+    let user = await User.findOne({
+      where: { email },
+    });
 
-export { user };
+    return user;
+  };
+
+  User.associate = (models) => {
+    User.hasMany(models.Script, { onDelete: "CASCADE" });
+  };
+
+  return User;
+}
+
+export { defineUser };
