@@ -1,5 +1,5 @@
-import { AuthenticationError, UserInputError } from "apollo-server";
-import { tokenifyUser } from "../utils/index";
+import { AuthenticationError } from "apollo-server";
+import { authedUserResponse } from "../utils/index";
 
 const userResolvers = {
   Query: {
@@ -29,12 +29,14 @@ const userResolvers = {
         email,
         passwordId: newPassword.dataValues.id,
       });
-      return { token: tokenifyUser(newUser) };
+
+      return authedUserResponse(newUser);
     },
     signIn: async (parent, { email, password }, { models }) => {
+      const ERROR_MESSAGE = "Username and password do not match.";
       const user = await models.User.findByEmail(email);
       if (!user) {
-        throw new UserInputError("User DNE");
+        throw new AuthenticationError(ERROR_MESSAGE);
       }
 
       const usersPassword = await models.Password.findByPk(
@@ -43,10 +45,10 @@ const userResolvers = {
       const isValid = await usersPassword.validatePassword(password);
 
       if (!isValid) {
-        throw new AuthenticationError("Invalid password");
+        throw new AuthenticationError(ERROR_MESSAGE);
       }
 
-      return { token: tokenifyUser(user) };
+      return authedUserResponse(user);
     },
   },
 };
