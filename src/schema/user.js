@@ -16,6 +16,7 @@ const userSchema = gql`
     id: ID!
     username: String!
     email: String!
+    roles: [String!]!
     token: String!
   }
 
@@ -23,6 +24,7 @@ const userSchema = gql`
     id: ID!
     username: String!
     email: String!
+    roles: [String!]!
   }
 `;
 

@@ -1,9 +1,11 @@
 import { AuthenticationError } from "apollo-server";
-import { authedUserResponse } from "../utils/index";
+import { authedUserResponse, formatRoles } from "../utils";
 
 const userResolvers = {
   Query: {
-    me: async (parent, args, { models, requestor }) => {
+    me: async (parent, args, context) => {
+      const { models, requestor } = context;
+      context.self = true;
       if (!requestor) {
         return null;
       }
@@ -19,7 +21,12 @@ const userResolvers = {
     users: async (parent, args, { models }) => await models.User.findAll(),
   },
   User: {
-    id: (user) => parseInt(user.id), // this isn't working
+    roles: (user, args, context) => {
+      if (context.self === true) {
+        return formatRoles(user.roles);
+      }
+      return [];
+    },
   },
   Mutation: {
     createUser: async (parent, { username, email, password }, { models }) => {

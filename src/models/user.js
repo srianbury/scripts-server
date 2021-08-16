@@ -28,6 +28,9 @@ function defineUser(sequelize) {
         isEmail: true,
       },
     },
+    roles: {
+      type: DataTypes.STRING,
+    },
   });
 
   User.findByUsername = async (username) => {

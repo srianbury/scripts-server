@@ -7,6 +7,7 @@ import { schema } from "./schema";
 import { resolvers } from "./resolvers";
 import { sequelize, models } from "./models";
 import { initDb } from "./dev";
+import { isOwnerWrapper, formatRoles } from "./utils";
 
 const BASE_PATH = "/graphql";
 const ERASE_DB_ON_SYNC = process.env.NODE_ENV === "production" ? false : true;
@@ -19,7 +20,12 @@ async function getRequestor(req) {
   }
 
   if (token) {
-    return await jwt.verify(token, process.env.SECRET);
+    let user = await jwt.verify(token, process.env.SECRET);
+    user = {
+      ...user,
+      roles: formatRoles(user.roles),
+    };
+    return user;
   }
 }
 
@@ -36,10 +42,15 @@ async function startApolloServer() {
         .replace("SequelizeValidationError: ", "")
         .replace("Validation error: ", ""),
     }),
-    context: async ({ req }) => ({
-      models,
-      requestor: await getRequestor(req),
-    }),
+    context: async ({ req }) => {
+      const requestor = await getRequestor(req);
+
+      return {
+        models,
+        requestor,
+        isOwner: isOwnerWrapper(requestor),
+      };
+    },
   });
 
   await server.start();
