@@ -4,12 +4,8 @@ import { definePassword } from "./password";
 import { defineSript } from "./script";
 
 const sequelize = new Sequelize(
-  process.env.DATABASE,
-  process.env.DATABASE_USERNAME,
-  process.env.DATABASE_PASSWORD,
+  `postgres://${process.env.DATABASE_USERNAME}:${process.env.DATABASE_PASSWORD}@${process.env.DATABASE_HOST}:${process.env.DATABASE_PORT}/${process.env.DATABASE}`,
   {
-    host: process.env.DATABASE_HOST,
-    port: process.env.DATABASE_PORT,
     dialect: "postgres",
   }
 );
