@@ -9,7 +9,8 @@ const userResolvers = {
       if (!requestor) {
         return null;
       }
-      return await models.User.findByPk(requestor.id);
+      const user = await models.User.findByPk(requestor.id);
+      return authedUserResponse(user);
     },
     user: async (parent, { username }, { models }) => {
       return await models.User.findOne({
@@ -39,11 +40,12 @@ const userResolvers = {
 
       return authedUserResponse(newUser);
     },
-    signIn: async (parent, { email, password }, { models }) => {
-      const ERROR_MESSAGE = "Username and password do not match.";
+    signIn: async (parent, { email, password }, { models, CONSTANTS }) => {
       const user = await models.User.findByEmail(email);
       if (!user) {
-        throw new AuthenticationError(ERROR_MESSAGE);
+        throw new AuthenticationError(
+          CONSTANTS.USERNAME_AND_PASSWORD_DO_NOT_MATCH
+        );
       }
 
       const usersPassword = await models.Password.findByPk(
@@ -52,7 +54,9 @@ const userResolvers = {
       const isValid = await usersPassword.validatePassword(password);
 
       if (!isValid) {
-        throw new AuthenticationError(ERROR_MESSAGE);
+        throw new AuthenticationError(
+          CONSTANTS.USERNAME_AND_PASSWORD_DO_NOT_MATCH
+        );
       }
 
       return authedUserResponse(user);

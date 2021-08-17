@@ -1,33 +1,13 @@
-import "dotenv/config";
+// require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` });
 import cors from "cors";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
-import jwt from "jsonwebtoken";
 import { schema } from "./schema";
 import { resolvers } from "./resolvers";
 import { sequelize, models } from "./models";
 import { initDb } from "./dev";
-import { isOwnerWrapper, formatRoles } from "./utils";
-
-const BASE_PATH = "/graphql";
-const ERASE_DB_ON_SYNC = process.env.NODE_ENV === "production" ? false : true;
-
-async function getRequestor(req) {
-  const token = req.headers["authorization"];
-
-  if (!token) {
-    return null;
-  }
-
-  if (token) {
-    let user = await jwt.verify(token, process.env.SECRET);
-    user = {
-      ...user,
-      roles: formatRoles(user.roles),
-    };
-    return user;
-  }
-}
+import { isOwnerWrapper, getRequestor } from "./utils";
+import * as CONSTANTS from "./constants";
 
 async function startApolloServer() {
   const app = express();
@@ -49,17 +29,18 @@ async function startApolloServer() {
         models,
         requestor,
         isOwner: isOwnerWrapper(requestor),
+        CONSTANTS,
       };
     },
   });
 
   await server.start();
-  server.applyMiddleware({ app, path: BASE_PATH });
+  server.applyMiddleware({ app, path: CONSTANTS.BASE_PATH });
   // await new Promise((resolve) =>
   //   app.listen({ port: process.env.PORT }, resolve)
   // );
-  sequelize.sync({ force: ERASE_DB_ON_SYNC }).then(async () => {
-    if (ERASE_DB_ON_SYNC) {
+  sequelize.sync({ force: CONSTANTS.ERASE_DB_ON_SYNC }).then(async () => {
+    if (CONSTANTS.ERASE_DB_ON_SYNC) {
       initDb(models);
     }
 
@@ -67,7 +48,7 @@ async function startApolloServer() {
   });
 
   console.log(
-    `Apollo Server running at http://localhost:${process.env.PORT}${BASE_PATH}`
+    `Apollo Server running at http://localhost:${process.env.PORT}${CONSTANTS.BASE_PATH}`
   );
   return { server, app };
 }

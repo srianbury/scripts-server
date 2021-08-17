@@ -2,7 +2,7 @@ import { gql } from "apollo-server-express";
 
 const userSchema = gql`
   extend type Query {
-    me: User
+    me: AuthUser
     user(username: String!): User
     users: [User!]
   }
