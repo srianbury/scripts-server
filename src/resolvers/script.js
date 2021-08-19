@@ -44,8 +44,8 @@ const scriptResolvers = {
     ),
   },
   Script: {
-    user: async (message, args, { models }) => {
-      return await models.User.findByPk(message.userId);
+    user: async (script, args, { models }) => {
+      return await models.User.findByPk(script.userId);
     },
   },
 };
