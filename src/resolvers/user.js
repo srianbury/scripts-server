@@ -21,14 +21,14 @@ const userResolvers = {
     },
     users: async (parent, args, { models }) => await models.User.findAll(),
   },
-  User: {
-    roles: (user, args, context) => {
-      if (context.self === true) {
-        return formatRoles(user.roles);
-      }
-      return [];
-    },
-  },
+  // User: {
+  //   roles: (user, args, context) => {
+  //     if (context.self === true) {
+  //       return formatRoles(user.roles);
+  //     }
+  //     return [];
+  //   },
+  // },
   Mutation: {
     createUser: async (parent, { username, email, password }, { models }) => {
       const newPassword = await models.Password.create({ password });

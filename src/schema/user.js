@@ -23,8 +23,6 @@ const userSchema = gql`
   type User {
     id: ID!
     username: String!
-    email: String!
-    roles: [String!]!
   }
 `;
 

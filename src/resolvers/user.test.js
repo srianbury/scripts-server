@@ -14,8 +14,6 @@ async function findUserByUsername(variables) {
         user(username: $username) {
           id
           username
-          roles
-          email
         }
       }
     `,
@@ -31,6 +29,26 @@ async function login(variables) {
       query: `
       mutation($email: String!, $password: String!) {
         signIn(email: $email, password: $password) {
+          id
+          username
+          email
+          roles
+          token
+        }
+      }
+    `,
+      variables,
+    }
+  );
+}
+
+async function createUser(variables) {
+  return axios.post(
+    `http://localhost:${process.env.PORT}${CONSTANTS.BASE_PATH}`,
+    {
+      query: `
+      mutation($username: String!, $email: String!, $password: String!) {
+        createUser(username: $username, email: $email, password: $password) {
           id
           username
           email
@@ -81,8 +99,6 @@ async function getAllUsers() {
           users {
             id
             username
-            email
-            roles
           }
         }
     `,
@@ -98,15 +114,14 @@ describe("users", () => {
           user: {
             id: "1",
             username: "bsunbury",
-            email: "bsunbury@scripts.com",
-            roles: [],
           },
         },
       };
 
       const actual = await findUserByUsername({ username: "bsunbury" });
 
-      expect(actual.data).to.eql(expected);
+      expect(actual.data.data.user).to.have.all.keys("id", "username");
+      expect(actual.data).excludingEvery(["id"]).to.eql(expected);
     });
 
     it("should return null b/c the user does not exist", async () => {
@@ -213,14 +228,10 @@ describe("users", () => {
             {
               id: "1-placeholder",
               username: "bsunbury",
-              email: "bsunbury@scripts.com",
-              roles: [],
             },
             {
               id: "2-placeholder",
               username: "stevie",
-              email: "stevie@scripts.com",
-              roles: [],
             },
           ],
         },
@@ -230,8 +241,51 @@ describe("users", () => {
 
       expect(actual.data).excludingEvery("id").to.eql(expected);
       actual.data.data.users.forEach((user) => {
-        expect(user).to.have.all.keys("id", "username", "email", "roles");
+        expect(user).to.have.all.keys("id", "username");
       });
+    });
+  });
+
+  describe("createUser(username: String!, email: String!, password: String!): AuthUser!", () => {
+    it("should fail if the username is invalid", async () => {
+      const actual = await createUser({
+        username: " mynameisbilbo ",
+        email: "newuser@scripts.com",
+        password: "thiswillwork",
+      });
+
+      expect(actual.data.errors[0].message).to.eql(
+        CONSTANTS.USERNAME_CANNOT_CONTAIN_LEADING_NOR_TRAILING_WHITESPACE
+      );
+    });
+
+    it("should succeed", async () => {
+      const actual = await createUser({
+        username: "samiam",
+        email: "samiam@scripts.com",
+        password: "sammyspassword",
+      });
+
+      const expected = {
+        data: {
+          createUser: {
+            id: "3",
+            username: "samiam",
+            email: "samiam@scripts.com",
+            roles: [],
+            token: "ey...",
+          },
+        },
+      };
+
+      expect(actual.data.data.createUser).to.have.all.keys(
+        "id",
+        "username",
+        "email",
+        "roles",
+        "token"
+      );
+      expect(actual.data).excludingEvery(["id", "token"]).to.eql(expected);
     });
   });
 });

@@ -1,4 +1,5 @@
 import { DataTypes } from "sequelize";
+import * as CONSTANTS from "../constants";
 
 function defineUser(sequelize) {
   const User = sequelize.define("user", {
@@ -14,7 +15,7 @@ function defineUser(sequelize) {
         doesNotHaveLeadingNorTrailingWhitespace(value) {
           if (value !== value.trim()) {
             throw new Error(
-              "Username cannot contain leading nor trailing whitespace."
+              CONSTANTS.USERNAME_CANNOT_CONTAIN_LEADING_NOR_TRAILING_WHITESPACE
             );
           }
         },
