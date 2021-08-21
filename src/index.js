@@ -19,8 +19,8 @@ async function startApolloServer() {
     formatError: (error) => ({
       ...error,
       message: error.message
-        .replace("SequelizeValidationError: ", "")
-        .replace("Validation error: ", ""),
+        .replace(/SequelizeValidationError: /g, "")
+        .replace(/Validation error: /g, ""),
     }),
     context: async ({ req }) => {
       const requestor = await getRequestor(req);

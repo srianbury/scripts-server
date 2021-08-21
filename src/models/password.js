@@ -1,15 +1,25 @@
 import { DataTypes } from "sequelize";
 import bcrypt from "bcrypt";
+import * as CONSTANTS from "../constants";
 
 function definePassword(sequelize) {
   const Password = sequelize.define("password", {
     password: {
       type: DataTypes.STRING,
-      allowNUll: false,
+      allowNull: {
+        args: false,
+        msg: CONSTANTS.PASSWORD_CANNOT_BE_NULL,
+      },
       is: /^[0-9a-f]{64}$/i,
       validate: {
-        notEmpty: true,
-        len: [10, 42],
+        notEmpty: {
+          args: true,
+          msg: CONSTANTS.PASSWORD_LENGTH_REQUIREMENT,
+        },
+        len: {
+          args: [10, 42],
+          mgs: CONSTANTS.PASSWORD_LENGTH_REQUIREMENT,
+        },
       },
     },
   });

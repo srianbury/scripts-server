@@ -247,9 +247,9 @@ describe("users", () => {
   });
 
   describe("createUser(username: String!, email: String!, password: String!): AuthUser!", () => {
-    it("should fail if the username is invalid", async () => {
+    it("should fail if the username has leading whitespace", async () => {
       const actual = await createUser({
-        username: " mynameisbilbo ",
+        username: " mynameisbilbo",
         email: "newuser@scripts.com",
         password: "thiswillwork",
       });
@@ -257,6 +257,152 @@ describe("users", () => {
       expect(actual.data.errors[0].message).to.eql(
         CONSTANTS.USERNAME_CANNOT_CONTAIN_LEADING_NOR_TRAILING_WHITESPACE
       );
+    });
+
+    it("should fail if the username has trailing whitespace", async () => {
+      const actual = await createUser({
+        username: "mynameisbilbo ",
+        email: "newuser@scripts.com",
+        password: "thiswillwork",
+      });
+
+      expect(actual.data.errors[0].message).to.eql(
+        CONSTANTS.USERNAME_CANNOT_CONTAIN_LEADING_NOR_TRAILING_WHITESPACE
+      );
+    });
+
+    it("should fail if the username is blank", async () => {
+      const actual = await createUser({
+        username: "",
+        email: "newuser@scripts.com",
+        password: "thiswillwork",
+      });
+
+      expect(actual.data.errors[0].message).to.eql(
+        CONSTANTS.USERNAME_CANNOT_BE_BLANK
+      );
+    });
+
+    it("should fail if the username is all spaces", async () => {
+      const actual = await createUser({
+        username: " ",
+        email: "newuser@scripts.com",
+        password: "thiswillwork",
+      });
+
+      expect(actual.data.errors[0].message).to.eql(
+        CONSTANTS.USERNAME_CANNOT_BE_BLANK
+      );
+    });
+
+    it("should fail if the username is not available", async () => {
+      const actual = await createUser({
+        username: "BSUNBURY",
+        email: "newuser@scripts.com",
+        password: "thiswillwork",
+      });
+
+      expect(actual.data).to.have.property("errors");
+
+      // expect(actual.data.errors[0].message).to.eql(
+      //   CONSTANTS.THIS_USERNAME_ISNT_AVAILABLE
+      // );
+    });
+
+    it("should fail if the email is not valid", async () => {
+      const actual = await createUser({
+        username: "bsunbury",
+        email: "myemail",
+        password: "thiswillwork",
+      });
+
+      expect(actual.data.errors[0].message).to.eql(
+        CONSTANTS.ENTER_A_VALID_EMAIL
+      );
+    });
+
+    it("should fail if an account already exists for the given email", async () => {
+      const actual = await createUser({
+        username: "newusername",
+        email: "BSUNBURY@scripts.com",
+        password: "thiswillwork",
+      });
+
+      expect(actual.data).to.have.property("errors");
+
+      // expect(actual.data.errors[0].message).to.eql(
+      //   CONSTANTS.AN_ACCOUNT_ALREADY_EXISTS_FOR_THIS_EMAIL
+      // );
+    });
+
+    it("should fail if the password is null", async () => {
+      const actual = await createUser({
+        username: "nulluser",
+        email: "nulluser@scripts.com",
+        password: null,
+      });
+
+      expect(actual.data).to.have.property("errors");
+
+      // expect(actual.data.errors[0].message).to.eql(
+      //   CONSTANTS.PASSWORD_CANNOT_BE_NULL
+      // );
+    });
+
+    it("should fail if the password is blank", async () => {
+      const actual = await createUser({
+        username: "nulluser",
+        email: "nulluser@scripts.com",
+        password: "",
+      });
+
+      expect(actual.data).to.have.property("errors");
+
+      // expect(actual.data.errors[0].message).to.eql(
+      //   CONSTANTS.PASSWORD_LENGTH_REQUIREMENT
+      // );
+    });
+
+    it("should fail if the password is all spaces", async () => {
+      const actual = await createUser({
+        username: "nulluser",
+        email: "nulluser@scripts.com",
+        password: " ",
+      });
+
+      expect(actual.data).to.have.property("errors");
+
+      // expect(actual.data.errors[0].message).to.eql(
+      //   CONSTANTS.PASSWORD_LENGTH_REQUIREMENT
+      // );
+    });
+
+    it("should fail if the password is too short", async () => {
+      const actual = await createUser({
+        username: "nulluser",
+        email: "nulluser@scripts.com",
+        password: "word",
+      });
+
+      expect(actual.data).to.have.property("errors");
+
+      // expect(actual.data.errors[0].message).to.eql(
+      //   CONSTANTS.PASSWORD_LENGTH_REQUIREMENT
+      // );
+    });
+
+    it("should fail if the password is too short", async () => {
+      const actual = await createUser({
+        username: "nulluser",
+        email: "nulluser@scripts.com",
+        password: "word",
+      });
+
+      expect(actual.data).to.have.property("errors");
+
+      // expect(actual.data.errors[0].message).to.eql(
+      //   CONSTANTS.PASSWORD_LENGTH_REQUIREMENT
+      // );
     });
 
     it("should succeed", async () => {
