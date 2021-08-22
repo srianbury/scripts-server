@@ -1,4 +1,5 @@
 import { DataTypes } from "sequelize";
+import * as CONSTANTS from "../constants";
 
 function defineSript(sequelize) {
   const Script = sequelize.define("script", {
@@ -7,8 +8,7 @@ function defineSript(sequelize) {
       allowNull: false,
       validate: {
         notEmpty: {
-          args: true,
-          msg: "Script's title cannot be blank.",
+          msg: "Title cannot be blank.",
         },
         len: [1, 64],
       },
@@ -19,7 +19,7 @@ function defineSript(sequelize) {
       validate: {
         notEmpty: {
           args: true,
-          msg: "Script's text cannot be blank.",
+          msg: CONSTANTS.TEXT_CANNOT_BE_BLANK,
         },
       },
     },

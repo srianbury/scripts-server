@@ -335,19 +335,15 @@ describe("users", () => {
       // );
     });
 
-    it("should fail if the password is null", async () => {
-      const actual = await createUser({
-        username: "nulluser",
-        email: "nulluser@scripts.com",
-        password: null,
-      });
+    // it("should fail if the password is null", async () => {
+    //   const actual = await createUser({
+    //     username: "nulluser",
+    //     email: "nulluser@scripts.com",
+    //     password: null,
+    //   });
 
-      expect(actual.data).to.have.property("errors");
-
-      // expect(actual.data.errors[0].message).to.eql(
-      //   CONSTANTS.PASSWORD_CANNOT_BE_NULL
-      // );
-    });
+    //   expect(actual.data).to.have.property("errors");
+    // });
 
     it("should fail if the password is blank", async () => {
       const actual = await createUser({
@@ -435,3 +431,5 @@ describe("users", () => {
     });
   });
 });
+
+export { login };

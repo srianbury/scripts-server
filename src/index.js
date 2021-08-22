@@ -20,7 +20,8 @@ async function startApolloServer() {
       ...error,
       message: error.message
         .replace(/SequelizeValidationError: /g, "")
-        .replace(/Validation error: /g, ""),
+        .replace(/Validation error: /g, "")
+        .replace(/Context creation failed: /g, ""),
     }),
     context: async ({ req }) => {
       const requestor = await getRequestor(req);

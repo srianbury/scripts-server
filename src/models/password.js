@@ -24,8 +24,9 @@ function definePassword(sequelize) {
     },
   });
 
-  Password.beforeCreate(async (user) => {
-    user.password = await user.generatePasswordHash();
+  Password.beforeCreate(async (password) => {
+    console.log("Password.beforeCreate", password.password);
+    password.password = await password.generatePasswordHash();
   });
 
   Password.associate = (models) => {

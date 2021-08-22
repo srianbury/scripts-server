@@ -16,6 +16,10 @@ const AN_ACCOUNT_ALREADY_EXISTS_FOR_THIS_EMAIL =
 const PASSWORD_CANNOT_BE_NULL = "Password cannot be null.";
 const PASSWORD_LENGTH_REQUIREMENT =
   "Password must be between 10 and 42 characters.";
+const USER_IS_NOT_AUTHENTICATED = "User is not authenticated.";
+const THE_JWT_SUPPLIED_IS_NOT_VALID =
+  "The JSON Web Token provided is not valid.";
+const TEXT_CANNOT_BE_BLANK = "Text cannot be blank.";
 
 export {
   BASE_PATH,
@@ -28,4 +32,7 @@ export {
   AN_ACCOUNT_ALREADY_EXISTS_FOR_THIS_EMAIL,
   PASSWORD_CANNOT_BE_NULL,
   PASSWORD_LENGTH_REQUIREMENT,
+  USER_IS_NOT_AUTHENTICATED,
+  THE_JWT_SUPPLIED_IS_NOT_VALID,
+  TEXT_CANNOT_BE_BLANK,
 };

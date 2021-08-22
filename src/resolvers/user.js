@@ -1,5 +1,5 @@
 import { AuthenticationError } from "apollo-server";
-import { authedUserResponse, formatRoles } from "../utils";
+import { authedUserResponse } from "../utils";
 
 const userResolvers = {
   Query: {
