@@ -3,19 +3,16 @@ import { defineUser } from "./user";
 import { definePassword } from "./password";
 import { defineSript } from "./script";
 
-const sequelize = new Sequelize(
-  `postgres://${process.env.DATABASE_USERNAME}:${process.env.DATABASE_PASSWORD}@${process.env.DATABASE_HOST}:${process.env.DATABASE_PORT}/${process.env.DATABASE}`,
-  {
-    dialect: "postgres",
-    ssl: true,
-    dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false,
-      },
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
+  dialect: "postgres",
+  ssl: true,
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,
     },
-  }
-);
+  },
+});
 
 const models = {
   User: defineUser(sequelize),
