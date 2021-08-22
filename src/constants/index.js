@@ -1,8 +1,9 @@
 const BASE_PATH = "/graphql";
-const ERASE_DB_ON_SYNC =
-  process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test"
-    ? true
-    : false;
+const ERASE_DB_ON_SYNC = ["development", "test", "stage"].includes(
+  process.env.NODE_ENV
+)
+  ? true
+  : false;
 const USERNAME_AND_PASSWORD_DO_NOT_MATCH =
   "Username and password do not match.";
 const USERNAME_CANNOT_CONTAIN_LEADING_NOR_TRAILING_WHITESPACE =
