@@ -7,10 +7,8 @@ import { login } from "./user.test";
 chai.use(chaiexclude);
 
 async function getAllScripts() {
-  return axios.post(
-    `http://localhost:${process.env.PORT}${CONSTANTS.BASE_PATH}`,
-    {
-      query: `
+  return axios.post(CONSTANTS.TEST_URL, {
+    query: `
       query {
         scripts {
           id
@@ -23,15 +21,12 @@ async function getAllScripts() {
         }
       }
     `,
-    }
-  );
+  });
 }
 
 async function findScriptById(variables) {
-  return axios.post(
-    `http://localhost:${process.env.PORT}${CONSTANTS.BASE_PATH}`,
-    {
-      query: `
+  return axios.post(CONSTANTS.TEST_URL, {
+    query: `
       query ($id: ID!) {
         script(id: $id){
           id,
@@ -44,9 +39,8 @@ async function findScriptById(variables) {
         }
       }
     `,
-      variables,
-    }
-  );
+    variables,
+  });
 }
 
 async function createScript(token, variables) {
@@ -60,7 +54,7 @@ async function createScript(token, variables) {
         };
 
   return axios.post(
-    `http://localhost:${process.env.PORT}${CONSTANTS.BASE_PATH}`,
+    CONSTANTS.TEST_URL,
     {
       query: `
       mutation($title: String!, $text: String!) {
@@ -91,7 +85,7 @@ async function updateScript(token, variables) {
         };
 
   return axios.post(
-    `http://localhost:${process.env.PORT}${CONSTANTS.BASE_PATH}`,
+    CONSTANTS.TEST_URL,
     {
       query: `
       mutation($id: ID!, $title: String!, $text: String!) {
@@ -112,10 +106,8 @@ async function updateScript(token, variables) {
 }
 
 async function tryToCreateScriptWithoutSendingAToken(variables) {
-  return axios.post(
-    `http://localhost:${process.env.PORT}${CONSTANTS.BASE_PATH}`,
-    {
-      query: `
+  return axios.post(CONSTANTS.TEST_URL, {
+    query: `
       mutation($title: String!, $text: String!) {
         createScript(title: $title, text: $text) {
           id
@@ -127,9 +119,8 @@ async function tryToCreateScriptWithoutSendingAToken(variables) {
         }
       }
     `,
-      variables,
-    }
-  );
+    variables,
+  });
 }
 
 describe("scripts", () => {

@@ -1,4 +1,4 @@
-const BASE_PATH = "/graphql";
+const BASE_PATH = process.env.BASE_PATH;
 const ERASE_DB_ON_SYNC = ["development", "test", "stage"].includes(
   process.env.NODE_ENV
 )
@@ -21,6 +21,9 @@ const USER_IS_NOT_AUTHENTICATED = "User is not authenticated.";
 const THE_JWT_SUPPLIED_IS_NOT_VALID =
   "The JSON Web Token provided is not valid.";
 const TEXT_CANNOT_BE_BLANK = "Text cannot be blank.";
+const TEST_URL =
+  process.env.TEST_URL ||
+  `http://localhost:${process.env.PORT}${process.env.BASE_PATH}`;
 
 export {
   BASE_PATH,
@@ -36,4 +39,5 @@ export {
   USER_IS_NOT_AUTHENTICATED,
   THE_JWT_SUPPLIED_IS_NOT_VALID,
   TEXT_CANNOT_BE_BLANK,
+  TEST_URL,
 };

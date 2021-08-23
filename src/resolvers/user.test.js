@@ -6,10 +6,8 @@ import * as CONSTANTS from "../constants";
 chai.use(chaiexclude);
 
 async function findUserByUsername(variables) {
-  return axios.post(
-    `http://localhost:${process.env.PORT}${CONSTANTS.BASE_PATH}`,
-    {
-      query: `
+  return axios.post(CONSTANTS.TEST_URL, {
+    query: `
       query ($username: String!) {
         user(username: $username) {
           id
@@ -17,16 +15,13 @@ async function findUserByUsername(variables) {
         }
       }
     `,
-      variables,
-    }
-  );
+    variables,
+  });
 }
 
 async function login(variables) {
-  return axios.post(
-    `http://localhost:${process.env.PORT}${CONSTANTS.BASE_PATH}`,
-    {
-      query: `
+  return axios.post(CONSTANTS.TEST_URL, {
+    query: `
       mutation($email: String!, $password: String!) {
         signIn(email: $email, password: $password) {
           id
@@ -37,16 +32,13 @@ async function login(variables) {
         }
       }
     `,
-      variables,
-    }
-  );
+    variables,
+  });
 }
 
 async function createUser(variables) {
-  return axios.post(
-    `http://localhost:${process.env.PORT}${CONSTANTS.BASE_PATH}`,
-    {
-      query: `
+  return axios.post(CONSTANTS.TEST_URL, {
+    query: `
       mutation($username: String!, $email: String!, $password: String!) {
         createUser(username: $username, email: $email, password: $password) {
           id
@@ -57,9 +49,8 @@ async function createUser(variables) {
         }
       }
     `,
-      variables,
-    }
-  );
+    variables,
+  });
 }
 
 async function getRequestor(token) {
@@ -72,7 +63,7 @@ async function getRequestor(token) {
           },
         };
   return axios.post(
-    `http://localhost:${process.env.PORT}${CONSTANTS.BASE_PATH}`,
+    CONSTANTS.TEST_URL,
     {
       query: `
         query {
@@ -91,10 +82,8 @@ async function getRequestor(token) {
 }
 
 async function getAllUsers() {
-  return axios.post(
-    `http://localhost:${process.env.PORT}${CONSTANTS.BASE_PATH}`,
-    {
-      query: `
+  return axios.post(CONSTANTS.TEST_URL, {
+    query: `
         query {
           users {
             id
@@ -102,8 +91,7 @@ async function getAllUsers() {
           }
         }
     `,
-    }
-  );
+  });
 }
 
 describe("users", () => {
