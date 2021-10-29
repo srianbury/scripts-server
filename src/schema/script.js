@@ -7,8 +7,13 @@ const scriptSchema = gql`
   }
 
   extend type Mutation {
-    createScript(title: String!, text: String!): Script!
-    updateScript(id: ID!, title: String, text: String): Script!
+    createScript(title: String!, text: String!, url: String): Script!
+    updateScript(id: ID!, title: String, text: String, url: String): Script!
+  }
+
+  type Url {
+    domain: String
+    src: String
   }
 
   type Script {
@@ -16,6 +21,7 @@ const scriptSchema = gql`
     createdAt: DateTime!
     title: String!
     text: String!
+    url: Url
     user: User!
   }
 `;

@@ -4,9 +4,10 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "start": "SET NODE_ENV=development&&nodemon -r dotenv/config --exec babel-node src/index.js dotenv_config_path=.env.development",
+    "start:dev": "SET NODE_ENV=development&&nodemon -r dotenv/config --exec babel-node src/index.js dotenv_config_path=.env.development",
     "start:test": "SET NODE_ENV=test&&nodemon -r dotenv/config --exec babel-node src/index.js dotenv_config_path=.env.test",
-    "test": "SET NODE_ENV=test&&mocha -r dotenv/config --require @babel/register 'src/**/*.test.js' dotenv_config_path=.env.test",
+    "test:local": "SET NODE_ENV=test&&mocha -r dotenv/config --require @babel/register 'src/**/*.test.js' dotenv_config_path=.env.test",
+    "test:stage": "SET NODE_ENV=stage&&mocha -r dotenv/config --require @babel/register 'src/**/*.test.js' dotenv_config_path=.env.stage",
     "clean": "rm -rf build && mkdir build",
     "build-babel": "babel -d ./build ./src -s",
     "build": "npm run clean && npm run build-babel"
