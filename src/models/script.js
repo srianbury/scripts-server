@@ -14,12 +14,22 @@ function defineSript(sequelize) {
       },
     },
     text: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(8000),
       allowNull: false,
       validate: {
         notEmpty: {
           args: true,
           msg: CONSTANTS.TEXT_CANNOT_BE_BLANK,
+        },
+      },
+    },
+    url: {
+      type: DataTypes.STRING(2048),
+      allowNull: true,
+      validate: {
+        isUrl: {
+          args: true,
+          msg: CONSTANTS.URL_IS_NOT_VALID,
         },
       },
     },

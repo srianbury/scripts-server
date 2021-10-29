@@ -23,6 +23,7 @@ async function initDb(models) {
   await models.Script.create({
     title: "the story",
     text: "this is the story of a girl",
+    url: "https://www.youtube.com/watch?v=qIsgdOVGA04",
     userId: bsunbury.dataValues.id,
   });
 

@@ -15,6 +15,10 @@ async function getAllScripts() {
           createdAt
           title
           text
+          url {
+            domain
+            src
+          }
           user {
             username
           }
@@ -33,6 +37,10 @@ async function findScriptById(variables) {
           createdAt,
           title,
           text
+          url {
+            domain
+            src
+          }
           user {
             username
           }
@@ -57,11 +65,15 @@ async function createScript(token, variables) {
     CONSTANTS.TEST_URL,
     {
       query: `
-      mutation($title: String!, $text: String!) {
-        createScript(title: $title, text: $text) {
+      mutation($title: String!, $text: String!, $url: String) {
+        createScript(title: $title, text: $text, url: $url) {
           id
           title
           text
+          url {
+            domain
+            src
+          }
           user {
             username
           }
@@ -88,11 +100,15 @@ async function updateScript(token, variables) {
     CONSTANTS.TEST_URL,
     {
       query: `
-      mutation($id: ID!, $title: String!, $text: String!) {
-        updateScript(id: $id, title: $title, text: $text){
+      mutation($id: ID!, $title: String!, $text: String!, $url: String) {
+        updateScript(id: $id, title: $title, text: $text, url: $url){
           id
           title
           text
+          url {
+            domain
+            src
+          }
           user {
             username
           }
@@ -145,6 +161,10 @@ describe("scripts", () => {
               createdAt: "2021-08-21T00:38:31.346Z",
               title: "the story",
               text: "this is the story of a girl",
+              url: {
+                domain: "youtube",
+                src: "https://www.youtube.com/embed/qIsgdOVGA04",
+              },
               user: {
                 username: "bsunbury",
               },
@@ -154,6 +174,7 @@ describe("scripts", () => {
               createdAt: "2021-08-21T00:38:31.355Z",
               title: "stevies story",
               text: "somebody once told me",
+              url: null,
               user: {
                 username: "stevie",
               },
@@ -193,6 +214,10 @@ describe("scripts", () => {
             createdAt: "2021-08-21T21:49:23.235Z",
             title: "the story",
             text: "this is the story of a girl",
+            url: {
+              domain: "youtube",
+              src: "https://www.youtube.com/embed/qIsgdOVGA04",
+            },
             user: {
               username: "bsunbury",
             },
@@ -216,6 +241,10 @@ describe("scripts", () => {
             id: "3-placeholder",
             title: "SCRIPT II",
             text: "The...",
+            url: {
+              domain: "youtube",
+              src: "https://www.youtube.com/embed/fnSAsmTjGQg",
+            },
             user: {
               username: "bsunbury",
             },
@@ -225,6 +254,29 @@ describe("scripts", () => {
       const actual = await createScript(bsunburyToken, {
         title: "SCRIPT II",
         text: "The...",
+        url: "https://www.youtube.com/watch?v=fnSAsmTjGQg",
+      });
+      expect(actual.data).excludingEvery(["id"]).to.eql(expected);
+      expect(actual.data.data.createScript).to.have.property("id");
+    });
+
+    it("should succeed without url", async () => {
+      const expected = {
+        data: {
+          createScript: {
+            id: "anotha one",
+            title: "the url-less",
+            text: "just texty, no url",
+            url: null,
+            user: {
+              username: "bsunbury",
+            },
+          },
+        },
+      };
+      const actual = await createScript(bsunburyToken, {
+        title: "the url-less",
+        text: "just texty, no url",
       });
       expect(actual.data).excludingEvery(["id"]).to.eql(expected);
       expect(actual.data.data.createScript).to.have.property("id");
@@ -234,6 +286,7 @@ describe("scripts", () => {
       const actual = await tryToCreateScriptWithoutSendingAToken({
         title: "SCRIPT III",
         text: "xxooxxoo",
+        url: "https://www.youtube.com/watch?v=fnSAsmTjGQg",
       });
 
       expect(actual.data.errors[0].message).to.eql(
@@ -245,6 +298,7 @@ describe("scripts", () => {
       const actual = await createScript(null, {
         title: "The Null Script",
         text: "null null null, null null null null",
+        url: "https://www.youtube.com/watch?v=fnSAsmTjGQg",
       });
 
       expect(actual.data.errors[0].message).to.eql(
@@ -256,6 +310,7 @@ describe("scripts", () => {
       const actual = await createScript("ey12345", {
         title: "The Null Script",
         text: "null null null, null null null null",
+        url: "https://www.youtube.com/watch?v=fnSAsmTjGQg",
       });
 
       expect(actual.data.errors[0].message).to.eql(
@@ -275,6 +330,7 @@ describe("scripts", () => {
       const actual = await createScript(bsunburyToken, {
         title: "",
         text: "The...",
+        url: "https://www.youtube.com/watch?v=fnSAsmTjGQg",
       });
       expect(actual.data).to.have.property("errors");
     });
@@ -284,6 +340,7 @@ describe("scripts", () => {
         title:
           "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         text: "mi texto",
+        url: "https://www.youtube.com/watch?v=fnSAsmTjGQg",
       });
       expect(actual.data).to.have.property("errors");
     });
@@ -300,6 +357,7 @@ describe("scripts", () => {
       const actual = await createScript(bsunburyToken, {
         title: "valid title",
         text: "",
+        url: "https://www.youtube.com/watch?v=fnSAsmTjGQg",
       });
       expect(actual.data.errors[0].message).to.eql(
         CONSTANTS.TEXT_CANNOT_BE_BLANK
@@ -313,6 +371,7 @@ describe("scripts", () => {
         id: 1,
         title: "Mi titulo",
         text: "lorey ipsy",
+        url: "https://www.youtube.com/watch?v=a2IlylFzjPM",
       });
 
       expect(actual.data.errors[0].message).to.eql(
@@ -327,6 +386,10 @@ describe("scripts", () => {
             id: "1",
             title: "Mi titulo",
             text: "lorey ipsy",
+            url: {
+              domain: "youtube",
+              src: "https://www.youtube.com/embed/a2IlylFzjPM",
+            },
             user: {
               username: "bsunbury",
             },
@@ -338,6 +401,7 @@ describe("scripts", () => {
         id: 1,
         title: "Mi titulo",
         text: "lorey ipsy",
+        url: "https://www.youtube.com/watch?v=a2IlylFzjPM",
       });
       expect(actual.data).to.eql(expected);
     });

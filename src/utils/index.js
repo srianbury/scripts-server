@@ -4,6 +4,7 @@ import { isAuthenticated } from "./isAuthenticated";
 import { isOwnerWrapper } from "./isOwner";
 import { formatRoles } from "./formatRoles";
 import { getRequestor } from "./getRequestor";
+import { getDomain, getSource } from "./scriptHelpers";
 
 export {
   tokenifyUser,
@@ -12,4 +13,6 @@ export {
   isOwnerWrapper,
   formatRoles,
   getRequestor,
+  getDomain,
+  getSource,
 };
