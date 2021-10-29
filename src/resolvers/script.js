@@ -1,5 +1,5 @@
 import { combineResolvers } from "graphql-resolvers";
-import { isAuthenticated, isOwner } from "../utils";
+import { isAuthenticated, getDomain, getSource } from "../utils";
 
 const scriptResolvers = {
   Query: {
@@ -17,17 +17,22 @@ const scriptResolvers = {
   Mutation: {
     createScript: combineResolvers(
       isAuthenticated,
-      async (parent, { title, text }, { requestor, models }) => {
+      async (parent, { title, text, url }, { requestor, models }) => {
         return await models.Script.create({
           title,
           text,
+          url,
           userId: requestor.id,
         });
       }
     ),
     updateScript: combineResolvers(
       isAuthenticated,
-      async (parent, { id, title, text }, { models, requestor, isOwner }) => {
+      async (
+        parent,
+        { id, title, text, url },
+        { models, requestor, isOwner }
+      ) => {
         const script = await models.Script.findByPk(id);
 
         isOwner(script);
@@ -38,6 +43,9 @@ const scriptResolvers = {
         if (text !== undefined) {
           script.text = text;
         }
+
+        script.url = url;
+
         await script.save();
         return script;
       }
@@ -46,6 +54,23 @@ const scriptResolvers = {
   Script: {
     user: async (script, args, { models }) => {
       return await models.User.findByPk(script.userId);
+    },
+    url: (script) => {
+      if (
+        script.url === "" ||
+        script.url === null ||
+        script.url === undefined
+      ) {
+        return script.url;
+      }
+
+      const domain = getDomain(script.url);
+      const src = getSource(script.url, domain);
+
+      return {
+        domain,
+        src,
+      };
     },
   },
 };
