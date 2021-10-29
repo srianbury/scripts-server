@@ -44,7 +44,9 @@ const scriptResolvers = {
           script.text = text;
         }
 
-        script.url = url;
+        if (script.url !== undefined) {
+          script.url = url;
+        }
 
         await script.save();
         return script;
